@@ -1,0 +1,12 @@
+In this problem, we are going to analysis some data (Superhero.dat) relating to children’s injuries while wearing superhero costumes. Children reporting to the emergency center at hospitals had the severity of their injury (injury) assessed (on a scale from 0, no injury, to 100, death). In addition, a note was taken of which superhero costume they were wearing (hero): Spiderman (1), Superman (2), the Hulk (3) or a Teenage Mutant Ninja Turtle (4).
+
+(a) Read the data `superhero.dat` by using `read_tsv` from `tidyverse`.
+
+
+(b) Recode the costume labels and make the variable a "factor".
+
+
+(c) Run a linear regression model to predict level of injury.
+
+
+(d)) Draw some boxplots to show the injury severity for each superhero costumes.

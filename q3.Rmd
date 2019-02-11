@@ -1,0 +1,20 @@
+This problem focuses on the collinearity problem.
+
+```{r}
+library(tidyverse)
+set.seed(1)  # make sure everybody will have the same "random" numbers
+x1 <- runif(100)
+x2 <- 0.5 * x1 + rnorm(100) / 10
+y <- 2 + 2 * x1 + rnorm(100)
+collinearity <- tibble(x1 = x1, x2 = x2, y = y)
+```
+
+(a) Use the function `cor` to compute the sample correction between `x1` and `x2`.
+
+(b) Using this data, fit a least squares regression to predict `y` using `x1` and `x2`. Describe the results obtained. How do estimated coefficients relate to the true coefficients?
+
+(c) Now fit a least squares regression to predict `y` using only `x1`. Comment on your results.
+
+
+d) Which model, part (b) or part (c), give a smaller prediction error? Use a test set to check it.
+

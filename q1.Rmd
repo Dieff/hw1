@@ -1,0 +1,20 @@
+This question involves the use of linear regression on the `Auto` data set from the textbook library `ISLR`. You could do `?Auto` to check the description of the dataset.
+
+```{r}
+library(tidyverse)
+library(ISLR)
+head(Auto)
+```
+
+
+(a) Use the `lm()` function to perform a linear regression with `mpg` as the response and `horsepower` as the predictor.
+
+(b) Plot the response and the predictor as well as the regression line. Any comment?
+
+(c) What's the prediction of `mpg` if `horsepower` is 100?
+
+
+(d) What's the value of `R^2`? 
+
+
+(e) Try a few different transformations of the predictor. And which is the best one you could find?
