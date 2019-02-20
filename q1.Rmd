@@ -9,12 +9,77 @@ head(Auto)
 
 (a) Use the `lm()` function to perform a linear regression with `mpg` as the response and `horsepower` as the predictor.
 
+```{r}
+model <- lm(formula = mpg ~ horsepower, data = Auto)
+model
+```
+
 (b) Plot the response and the predictor as well as the regression line. Any comment?
+
+A scatterplot of the data
+```{r}
+ggplot(Auto, aes(x = horsepower, y = mpg, color = horsepower)) + geom_point()
+```
+
+If we include the regression line of our model, we can see the fit.
+```{r}
+ggplot(Auto, aes(x = horsepower, y = mpg)) + geom_point() + geom_abline(slope = model$coefficients[2], intercept = model$coefficients[1])
+```
+
+
 
 (c) What's the prediction of `mpg` if `horsepower` is 100?
 
+```{r}
+predict.lm(model, new = data.frame(horsepower = 100))
+```
+
+The predicted miles per gallon is `24.15139`.
 
 (d) What's the value of `R^2`? 
 
+```{r}
+summary(model)
+```
+
+The value of `R^2` in the model is `0.6059`.
+
+### Model transformations
 
 (e) Try a few different transformations of the predictor. And which is the best one you could find?
+
+#### `log`
+
+A good first transformation might be to look at the `log` of the dependent variable.
+```{r}
+model_log <-  lm(data = Auto, formula = mpg ~ I(log(horsepower)))
+summary(model_log)
+```
+
+And a plot of the new model:
+```{r}
+ggplot(Auto, aes(x = log(horsepower), y = mpg)) + geom_point() + geom_abline(slope = model_log$coefficients[2], intercept = model_log$coefficients[1])
+```
+
+The value of `R^2` in the new model is `0.6892`, which is higher than in the original untransformed model. The plot shows that the line of fit is at least somewhat closer to the data 
+in the extremes of the data set. The transformation seems to have somewhat improved our model.
+
+#### `reciprocal`
+
+.
+```{r}
+model_inv <-  lm(data = Auto, formula = I(1/mpg) ~ horsepower)
+summary(model_inv)
+```
+
+And a plot of this model:
+```{r}
+ggplot(Auto, aes(x = horsepower, y = 1/mpg)) + geom_point() + geom_abline(slope = model_inv$coefficients[2], intercept = model_inv$coefficients[1])
+```
+
+With an `R^2` value of `.7307` this may may be a better fit than the other models considered.
+Since the dataset contains multiple variables, but we are only considereing one independent
+variable in the model, it may be that this variation represents the best possible fit we can find
+for the data when only considereng one of the variables.
+
+

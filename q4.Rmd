@@ -1,12 +1,61 @@
+# Question 4
+
 In this problem, we are going to analysis some data (Superhero.dat) relating to children’s injuries while wearing superhero costumes. Children reporting to the emergency center at hospitals had the severity of their injury (injury) assessed (on a scale from 0, no injury, to 100, death). In addition, a note was taken of which superhero costume they were wearing (hero): Spiderman (1), Superman (2), the Hulk (3) or a Teenage Mutant Ninja Turtle (4).
 
 (a) Read the data `superhero.dat` by using `read_tsv` from `tidyverse`.
 
+```{r}
+library(tidyverse)
+superheros <- read_tsv("superhero.dat")
+head(superheros)
+```
+
 
 (b) Recode the costume labels and make the variable a "factor".
 
+```{r}
+superheros_labelled <- superheros
+superheros_labelled$hero <- factor(superheros_labelled$hero, labels = c("Spiderman", "Superman", "Hulk", "TMZ"))
+head(superheros_labelled)
+```
 
 (c) Run a linear regression model to predict level of injury.
 
+```{r}
+model <- lm(injury ~ hero, data = superheros)
+summary(model)
+```
 
-(d)) Draw some boxplots to show the injury severity for each superhero costumes.
+```{r}
+ggplot(superheros, aes(x = hero, y = injury)) + geom_point() + geom_abline(slope = model$coefficients[2], intercept = model$coefficients[1])
+```
+
+
+(d) Draw some boxplots to show the injury severity for each superhero costumes.
+
+Spiderman
+```{r}
+spider <- superheros_labelled %>% filter(hero == "Spiderman")
+boxplot(spider$injury)
+```
+Superman
+```{r}
+super <- superheros_labelled %>% filter(hero == "Superman")
+boxplot(super$injury)
+```
+
+The Hulk
+```{r}
+hulk <- superheros_labelled %>% filter(hero == "Hulk")
+boxplot(hulk$injury)
+```
+
+Teenage Mutant Ninja Turtles
+```{r}
+tmz <- superheros_labelled %>% filter(hero == "TMZ")
+boxplot(tmz$injury)
+```
+
+
+
+

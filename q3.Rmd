@@ -1,7 +1,9 @@
+# Question 3
 This problem focuses on the collinearity problem.
 
 ```{r}
 library(tidyverse)
+library(modelr)
 set.seed(1)  # make sure everybody will have the same "random" numbers
 x1 <- runif(100)
 x2 <- 0.5 * x1 + rnorm(100) / 10
@@ -11,10 +13,50 @@ collinearity <- tibble(x1 = x1, x2 = x2, y = y)
 
 (a) Use the function `cor` to compute the sample correction between `x1` and `x2`.
 
+```{r}
+cor(x = x1, y = x2)
+```
+
 (b) Using this data, fit a least squares regression to predict `y` using `x1` and `x2`. Describe the results obtained. How do estimated coefficients relate to the true coefficients?
+
+```{r}
+data <- data.frame(y=y, x1=x1, x2=x2)
+model <- lm(data = data, formula = y ~ x1 + x2)
+summary(model)
+```
+
+```{r}
+mse(model, data)
+```
+
+The model obtained to predict the data performs poorly. It has an `R^2` value of only `0.1805`. Because of the association between the variables `x1` and `x2`, the coefficients found in this 
+model are likely a poor estimate of the true coefficients. The high correlation between
+two variables that were assumed to be independent in the creation of the model results
+in estimated coefficients that are very sensitive to small variations in the data.
 
 (c) Now fit a least squares regression to predict `y` using only `x1`. Comment on your results.
 
+```{r}
+model_w_x1 <- lm(y ~ x1, data = data)
+summary(model_w_x1)
+```
+```{r}
+mse(model_w_x1, data)
+```
+The model obtained with only `x1` has fairly similar summary statistics to the original model.
+However, since the original model was likely very much overfitted, this is misleading and the
+new model is the better one.
 
 d) Which model, part (b) or part (c), give a smaller prediction error? Use a test set to check it.
 
+```{r}
+rp <- resample_partition(data, c(train = 0.7, test = 0.3))
+train_set <- rp$train
+test_set <- rp$test
+
+model1 <- lm(y ~ x1 + x2, data = train_set)
+model2 <- lm(y ~ x1, data = train_set)
+c(mse(model1, test_set), mse(model2, test_set))
+```
+The first model gives a somewhat smaller prediction error. This is misleading because it is
+likely an overfitted model, as a result of the association between `x1` and `x2`.

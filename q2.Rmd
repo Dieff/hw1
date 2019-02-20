@@ -1,15 +1,47 @@
+# Question 2
 This question continues the use of the `Auto` data set.
 
 ```{r}
 library(tidyverse)
 library(ISLR)
+# For `mse` function
+library(modelr)
 head(Auto)
 ```
 
 (a) Use the `lm()` function to perform a multiple linear regression with `mpg` as the response and all other variables except `name` as the predictors.
 
+```{r}
+model <- lm(data = Auto, formula = mpg ~ cylinders + displacement + horsepower + weight + acceleration + year + origin )
+summary(model)
+```
+
 (b) Not all the variables would be useful to predict `mpg`. A way to test the significance of a variable is to consider a model without that variable. By comparing the MSEs of the original model and the reduced model, we will be able to tell which variables are more important. (You could compute the MSEs based on the whole dataset or based on a training set)
+
+```{r}
+vars <- c("displacement", "horsepower", "weight", "cylinders", "acceleration", "year", "origin")
+mses <- c()
+for (var in vars) {
+  l <- setdiff(vars, var)
+  t <- lm(data = Auto, formula = as.formula(paste("mpg~", paste(l, collapse="+"))))
+  mses <- c(mses, var, mse(t, Auto))
+}
+mses
+```
+The smallest `mse` is achieved when the variable "acceleration" is omitted.
 
 
 (c) You discovered the variable which is least significant in part (b). Now split the dataset into a train and test sets and verify that the model without the least significant variable indeed is better than the original model.
 
+```{r}
+rp <- resample_partition(Auto, c(train = 0.7, test = 0.3))
+train_set <- rp$train
+test_set <- rp$test
+
+original_model <- lm(train_set,  formula = mpg ~ cylinders + displacement + horsepower + weight + acceleration + year + origin)
+new_model <- lm(train_set,  formula = mpg ~ cylinders + displacement + horsepower + weight + year + origin)
+
+c(mse(original_model, test_set), mse(new_model, test_set))
+```
+
+The new model has an `mse` of `11.27833`, which is lower than the `11.14872` of the original.
